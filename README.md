@@ -27,7 +27,6 @@
 - works very nice with mh-hunters,
 - mh-hunters is a script if you don't have cops online.
 
-
 # Dependencies:
 - [qb-core](https://github.com/qbcore-framework/qb-core)
 - [qb-target](https://github.com/qbcore-framework/qb-target) 
