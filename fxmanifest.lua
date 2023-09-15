@@ -18,10 +18,10 @@ shared_scripts {
 }
 
 client_scripts {
-	'client/main.lua'
+    'client/main.lua'
 }
 
 server_scripts {
-	'server/main.lua',
+    'server/main.lua',
     'server/update.lua',
 }
