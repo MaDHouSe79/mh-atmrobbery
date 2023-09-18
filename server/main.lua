@@ -33,7 +33,7 @@ end)
 
 QBCore.Functions.CreateCallback("mh-atmrobbery:server:hasItem", function(source, cb)
     local src = source
-    local hasItem = QBCore.Functions.HasItem(Config.BomItem)
+    local hasItem = QBCore.Functions.HasItem(src, Config.BomItem, 1)
     if hasItem then
         Player.Functions.RemoveItem(Config.BomItem, 1)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[tmpData[i].name], "remove", 1)
