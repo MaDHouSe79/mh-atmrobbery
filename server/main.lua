@@ -28,7 +28,19 @@ local function SetIsLooted(entity)
 end
 
 QBCore.Functions.CreateCallback("mh-atmrobbery:server:canirobatm", function(source, cb, netID)
-	cb(IsAlreadyLooted(netID)) -- must return false to rob atm.
+    cb(IsAlreadyLooted(netID)) -- must return false to rob atm.
+end)
+
+QBCore.Functions.CreateCallback("mh-atmrobbery:server:hasItem", function(source, cb)
+    local src = source
+    local hasItem = QBCore.Functions.HasItem(Config.BomItem)
+    if hasItem then
+        Player.Functions.RemoveItem(Config.BomItem, 1)
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[tmpData[i].name], "remove", 1)
+        cb(true)
+    else
+        cb(false)
+    end
 end)
 
 AddEventHandler('onResourceStart', function(resource)
