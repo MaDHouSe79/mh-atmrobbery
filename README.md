@@ -61,9 +61,8 @@ ensure [defaultmaps]
 ensure [mh] -- here you must ensure the folder [mh]
 ```
 
-# 🙈 Youtube & Discord
+# 🙈 Youtube
 - [Youtube](https://www.youtube.com/c/MaDHouSe79)
-- [Discord](https://discord.gg/cEMSeE9dgS)
 
 # LICENSE
 [GPL LICENSE](./LICENSE)<br />
