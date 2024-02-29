@@ -35,14 +35,21 @@ QBCore.Functions.CreateCallback("mh-atmrobbery:server:hasItem", function(source,
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if Player then
-        local hasItem = QBCore.Functions.HasItem(src, Config.BomItem, 1)
+        local hasItem = QBCore.Functions.HasItem(src, Config.BomItem, 1) -- Adjusted to correctly access HasItem
         if hasItem then
             Player.Functions.RemoveItem(Config.BomItem, 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[tmpData[i].name], "remove", 1)
-            cb(true)
-        else
-            cb(false)
+            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[Config.BomItem], "remove", 1) -- Corrected item reference
+            cb(true) -- Notify callback about item presence
+            return -- Ensure no further execution after item found
         end
+    end
+    cb(false) -- Only call this if the player wasn't found or doesn't have the item
+end)
+
+QBCore.Functions.CreateCallback("mh-atmrobbery:server:checkResource", function(source, cb, resource)
+    if GetResourceState(resource) ~= 'missing' then
+        cb(true)
+        return
     end
     cb(false)
 end)
@@ -64,12 +71,21 @@ end)
 RegisterNetEvent('mh-atmrobbery:server:payout', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
+
+    local function calculateNonLinearAmount(minValue, maxValue, power)
+        local range = maxValue - minValue
+        local scaledRandom = math.random() ^ power
+        local adjustedValue = scaledRandom * range
+        return math.floor(minValue + adjustedValue)
+    end
+
+
     if Config.UseCash then
-        local amount = math.random(Config.MinCash, Config.MaxCash)
+        local amount = calculateNonLinearAmount(Config.MinCash, Config.MaxCash, Config.randModifier)
         Player.Functions.AddMoney('cash', amount)
         TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_cash', {amount = amount}), 'success') 
     elseif Config.UseBlackMoney then
-        local amount = math.random(Config.MinMarkedBills, Config.MaxMarkedBills)
+        local amount = calculateNonLinearAmount(Config.MinMarkedBills, Config.MaxMarkedBills, Config.randModifier)
         local info = {worth = math.random(Config.MinMarkedWorth, Config.MaxMarkedWorth)}
         Player.Functions.AddItem('markedbills', amount, false, info)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['markedbills'], "add", amount)
