@@ -63,14 +63,6 @@ local function AtmHasLooted(entity)
     TriggerServerEvent('mh-atmrobbery:server:setlooted', entity)
 end
 
----Get the distance between 2 coords
----@param pos1 location of position 1
----@param pos2 location of position 2
----@return int
-local function GetDistance(pos1, pos2)
-    return #(vector3(pos1.x, pos1.y, pos1.z) - vector3(pos2.x, pos2.y, pos2.z))
-end
-
 ---Place a cash prop on the ground
 ---@param atmCoords location of the current atm
 ---@param dropCoords location of the current position from the player.
@@ -100,6 +92,48 @@ local function AddBom(atmCoords, entity, dropCoords)
     FreezeEntityPosition(entity, false)
     AddExplosion(atmCoords.x, atmCoords.y, atmCoords.z, EXPLOSION_STICKYBOMB, 4.0, true, false, 20.0)
     AddCashOnGround(atmCoords, dropCoords)
+end
+
+local function RobAtm(entity, playerPed, atmCoords)
+
+    
+    -- Origen-police compat
+    -- Create a police alert on ATM robberies
+
+    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:checkResource', function(origen_policeIsStarted)
+        if origen_policeIsStarted then
+            if math.random(100) <= Config.copsCalledChance then
+                TriggerServerEvent("SendAlert:police", {
+                    coords = GetEntityCoords(PlayerPedId()), -- Coordinates vector3(x, y, z) in which the alert is triggered
+                    title = "ATM Robbery", -- Title in the alert header
+                    type = "FORCE", -- Alert type (GENERAL, RADARS, 215, DRUGS, FORCE, 48X) This is to filter the alerts in the dashboard
+                    message = "ATM robbery with forcefull entry", -- Alert message
+                    metadata = { -- Various data that contributes to an icon in the alert
+                    }
+                })
+            end
+        end
+    end, 'origen_police')
+
+    RunCoolDown()
+    AtmHasLooted(entity)
+    local dropCoords = GetEntityCoords(playerPed)
+    QBCore.Functions.Progressbar('rob_atm', Lang:t('progressbar.place_bomb'), 10000, false, true, {
+        disableMovement = true,
+        disableCarMovement = true,
+        disableMouse = false,
+        disableCombat = true,
+    }, {
+        animDict = 'anim@gangops@facility@servers@',
+        anim = 'hotwire',
+        flags = 16,
+    }, {}, {}, function() 
+        ClearPedTasks(playerPed)
+        AddBom(atmCoords, entity, dropCoords)
+    end, function() 
+        ClearPedTasks(playerPed)
+        QBCore.Functions.Notify(Lang:t('notify.failed'), 'error', 5000)
+    end)
 end
 
 AddEventHandler('onResourceStart', function(resource)
@@ -177,52 +211,18 @@ RegisterNetEvent('mh-atmrobbery:client:start', function(entity)
                 local hash = GetHashKey(v)
                 local atm = IsObjectNearPoint(hash, playerCoords.x, playerCoords.y, playerCoords.z, 1.5)
                 if atm then
-                    RunCoolDown()
-                    AtmHasLooted(entity)
                     TaskTurnPedToFaceEntity(PlayerPedId(), entity, 5000)
                     Citizen.Wait(1000)
                     if Config.UseItem then
                         QBCore.Functions.TriggerCallback('mh-atmrobbery:server:hasItem', function(hasBom)
                             if hasBom then
-                                local dropCoords = GetEntityCoords(playerPed)
-                                QBCore.Functions.Progressbar('rob_atm', Lang:t('progressbar.place_bomb'), Config.PlaceBompTime, false, true, {
-                                    disableMovement = true,
-                                    disableCarMovement = true,
-                                    disableMouse = false,
-                                    disableCombat = true,
-                                }, {
-                                    animDict = 'anim@gangops@facility@servers@',
-                                    anim = 'hotwire',
-                                    flags = 16,
-                                }, {}, {}, function() 
-                                    ClearPedTasks(ped)
-                                    AddBom(atmCoords, entity, dropCoords)
-                                end, function() 
-                                    ClearPedTasks(ped)
-                                    QBCore.Functions.Notify(Lang:t('notify.failed'), 'error', 5000)
-                                end)
+                                RobAtm(entity, playerPed, atmCoords)
                             else
                                 QBCore.Functions.Notify(Lang:t('notify.missing_item', {item = Config.BomItem}), 'error', 5000)
                             end
                         end)
                     else
-                        local dropCoords = GetEntityCoords(playerPed)
-                        QBCore.Functions.Progressbar('rob_atm', Lang:t('progressbar.place_bomb'), 10000, false, true, {
-                            disableMovement = true,
-                            disableCarMovement = true,
-                            disableMouse = false,
-                            disableCombat = true,
-                        }, {
-                            animDict = 'anim@gangops@facility@servers@',
-                            anim = 'hotwire',
-                            flags = 16,
-                        }, {}, {}, function() 
-                            ClearPedTasks(playerPed)
-                            AddBom(atmCoords, entity, dropCoords)
-                        end, function() 
-                            ClearPedTasks(playerPed)
-                            QBCore.Functions.Notify(Lang:t('notify.failed'), 'error', 5000)
-                        end)
+                        RobAtm(entity, playerPed, atmCoords)
                     end
                 end
             end
