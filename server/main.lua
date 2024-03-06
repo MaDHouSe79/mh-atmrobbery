@@ -17,6 +17,13 @@ local function Reset()
     end)
 end
 
+local function calculateNonLinearAmount(minValue, maxValue, power)
+    local range = maxValue - minValue
+    local scaledRandom = math.random() ^ power
+    local adjustedValue = scaledRandom * range
+    return math.floor(minValue + adjustedValue)
+end
+
 local function IsAlreadyLooted(entity)
     local found = false
     if netEntities[entity] then found = true end
@@ -28,7 +35,7 @@ local function SetIsLooted(entity)
 end
 
 QBCore.Functions.CreateCallback("mh-atmrobbery:server:canirobatm", function(source, cb, netID)
-    cb(IsAlreadyLooted(netID)) -- must return false to rob atm.
+    cb(IsAlreadyLooted(netID))
 end)
 
 QBCore.Functions.CreateCallback("mh-atmrobbery:server:hasItem", function(source, cb)
@@ -39,17 +46,15 @@ QBCore.Functions.CreateCallback("mh-atmrobbery:server:hasItem", function(source,
         if hasItem then
             Player.Functions.RemoveItem(Config.BomItem, 1)
             TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[Config.BomItem], "remove", 1) -- Corrected item reference
-            cb(true) -- Notify callback about item presence
-            return -- Ensure no further execution after item found
+            cb(true)
         end
     end
-    cb(false) -- Only call this if the player wasn't found or doesn't have the item
+    cb(false)
 end)
 
 QBCore.Functions.CreateCallback("mh-atmrobbery:server:checkResource", function(source, cb, resource)
     if GetResourceState(resource) ~= 'missing' then
         cb(true)
-        return
     end
     cb(false)
 end)
@@ -71,15 +76,6 @@ end)
 RegisterNetEvent('mh-atmrobbery:server:payout', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-
-    local function calculateNonLinearAmount(minValue, maxValue, power)
-        local range = maxValue - minValue
-        local scaledRandom = math.random() ^ power
-        local adjustedValue = scaledRandom * range
-        return math.floor(minValue + adjustedValue)
-    end
-
-
     if Config.UseCash then
         local amount = calculateNonLinearAmount(Config.MinCash, Config.MaxCash, Config.randModifier)
         Player.Functions.AddMoney('cash', amount)
