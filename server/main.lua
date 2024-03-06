@@ -1,7 +1,6 @@
 --[[ ===================================================== ]]--
 --[[            MH ATM Robbery Script by MaDHouSe          ]]--
 --[[ ===================================================== ]]--
-
 local QBCore = exports['qb-core']:GetCoreObject()
 local resetTimer = 900 -- 900 -- 15 min
 local netEntities = {}
