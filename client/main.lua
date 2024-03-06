@@ -1,7 +1,6 @@
 --[[ ===================================================== ]]--
 --[[            MH ATM Robbery Script by MaDHouSe          ]]--
 --[[ ===================================================== ]]--
-
 local QBCore = exports['qb-core']:GetCoreObject()
 local num = nil
 local isTakingMoney = false
@@ -100,8 +99,8 @@ end
 ---@param atmCoords table
 local function RobAtm(entity, playerPed, atmCoords)    
     -- Create a police alert on ATM robberies
-    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:checkResource', function(origen_policeIsStarted)
-        if origen_policeIsStarted then
+    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:policealert', function(policealert)
+        if policealert then
             if math.random(100) <= Config.copsCalledChance then
                 TriggerServerEvent("SendAlert:police", {
                     coords = GetEntityCoords(PlayerPedId()), -- Coordinates vector3(x, y, z) in which the alert is triggered
