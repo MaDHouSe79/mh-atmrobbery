@@ -94,12 +94,12 @@ local function AddBom(atmCoords, entity, dropCoords)
     AddCashOnGround(atmCoords, dropCoords)
 end
 
-local function RobAtm(entity, playerPed, atmCoords)
-
-    
-    -- Origen-police compat
+---Rob Atm
+---@param entity number
+---@param playerPed number
+---@param atmCoords table
+local function RobAtm(entity, playerPed, atmCoords)    
     -- Create a police alert on ATM robberies
-
     QBCore.Functions.TriggerCallback('mh-atmrobbery:server:checkResource', function(origen_policeIsStarted)
         if origen_policeIsStarted then
             if math.random(100) <= Config.copsCalledChance then
@@ -114,7 +114,6 @@ local function RobAtm(entity, playerPed, atmCoords)
             end
         end
     end, 'origen_police')
-
     RunCoolDown()
     AtmHasLooted(entity)
     local dropCoords = GetEntityCoords(playerPed)
