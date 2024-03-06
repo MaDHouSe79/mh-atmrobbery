@@ -28,8 +28,8 @@
 - mh-hunters is a script if you don't have cops online.
 
 # Video:
-- https://www.youtube.com/watch?v=84Mt4hEIRqs (No mh-hunters)
-- https://www.youtube.com/watch?v=loBKhk3rFj4 (With mh-hunters)
+- [No mh-hunters](https://www.youtube.com/watch?v=84Mt4hEIRqs)
+- [With mh-hunters](https://www.youtube.com/watch?v=loBKhk3rFj4)
 
 # Dependencies:
 - [qb-core](https://github.com/qbcore-framework/qb-core)
