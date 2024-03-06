@@ -3,7 +3,6 @@
 --[[ ===================================================== ]]--
 
 local Translations = {
-
     notify = {
         ['failed'] = "Failed to plant the bomb",
         ['cooldown_active'] = "You have an ATM rob cooldown!",
