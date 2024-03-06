@@ -98,21 +98,15 @@ end
 ---@param playerPed number
 ---@param atmCoords table
 local function RobAtm(entity, playerPed, atmCoords)    
-    -- Create a police alert on ATM robberies
-    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:policealert', function(policealert)
-        if policealert then
-            if math.random(100) <= Config.copsCalledChance then
-                TriggerServerEvent("SendAlert:police", {
-                    coords = GetEntityCoords(PlayerPedId()), -- Coordinates vector3(x, y, z) in which the alert is triggered
-                    title = "ATM Robbery", -- Title in the alert header
-                    type = "FORCE", -- Alert type (GENERAL, RADARS, 215, DRUGS, FORCE, 48X) This is to filter the alerts in the dashboard
-                    message = "ATM robbery with forcefull entry", -- Alert message
-                    metadata = { -- Various data that contributes to an icon in the alert
-                    }
-                })
-            end
-        end
-    end, 'origen_police')
+    if math.random(100) <= Config.copsCalledChance then
+        TriggerServerEvent("SendAlert:police", {
+            coords = GetEntityCoords(PlayerPedId()), -- Coordinates vector3(x, y, z) in which the alert is triggered
+            title = "ATM Robbery", -- Title in the alert header
+            type = "FORCE", -- Alert type (GENERAL, RADARS, 215, DRUGS, FORCE, 48X) This is to filter the alerts in the dashboard
+            message = "ATM robbery with forcefull entry", -- Alert message
+            metadata = {} -- Various data that contributes to an icon in the aler
+	})
+    end
     RunCoolDown()
     AtmHasLooted(entity)
     local dropCoords = GetEntityCoords(playerPed)
