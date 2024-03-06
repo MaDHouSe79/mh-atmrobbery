@@ -51,13 +51,6 @@ QBCore.Functions.CreateCallback("mh-atmrobbery:server:hasItem", function(source,
     cb(false)
 end)
 
-QBCore.Functions.CreateCallback("mh-atmrobbery:server:checkResource", function(source, cb, resource)
-    if GetResourceState(resource) ~= 'missing' then
-        cb(true)
-    end
-    cb(false)
-end)
-
 AddEventHandler('onResourceStart', function(resource)
     if resource == GetCurrentResourceName() then
         netEntities = {}
