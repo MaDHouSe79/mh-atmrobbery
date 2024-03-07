@@ -11,6 +11,7 @@ local Translations = {
         ['police_notify'] = "ATM Robbery",
         ['payout_cash'] = "Je kreeg €%{amount} cash!",
         ['payout_markedbills'] = "Je kreeg €%{amount} zwartgeld!",
+        ['payout_blackmoney'] = "Je kreeg €%{amount} zwart money!",
         ['already_robbed'] = "Deze ATM is al overvallen..",
         ['atm_robbery_reset'] = "The atm overvallen zijn gereset...",
     },
