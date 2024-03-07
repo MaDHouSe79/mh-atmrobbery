@@ -20,7 +20,7 @@ Config.MinCash = 500
 Config.MaxCash = 20000
 
 -- For MarkedBills
-Config.UseBlackMoney = false
+Config.UseBlackMoney = false -- only true if you use mh-cashasitem, when false it uses markedbills.
 Config.MinMarkedBills = 1 
 Config.MaxMarkedBills = 5
 Config.MinMarkedWorth = 500
