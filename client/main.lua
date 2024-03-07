@@ -103,20 +103,28 @@ local function AddBom(atmCoords, entity, dropCoords)
     AddCashOnGround(atmCoords, dropCoords)
 end
 
+---Alert Police
+local function AlertPolice()
+    if math.random(100) <= Config.copsCalledChance then
+        TriggerServerEvent("police:server:policeAlert", Lang:t('notify.police_notify_title'))
+        --[[
+        TriggerServerEvent("SendAlert:police", {
+            coords = GetEntityCoords(PlayerPedId()),
+            title = Lang:t('notify.police_notify_title'),
+            type = "FORCE", -- Alert type (GENERAL, RADARS, 215, DRUGS, FORCE, 48X)
+            message = Lang:t('notify.police_notify_description'),
+            metadata = {}
+        })
+        ]]--
+    end
+end
+
 ---Rob Atm
 ---@param entity number
 ---@param playerPed number
 ---@param atmCoords table
 local function RobAtm(entity, playerPed, atmCoords)    
-    if math.random(100) <= Config.copsCalledChance then
-        TriggerServerEvent("SendAlert:police", {
-            coords = GetEntityCoords(PlayerPedId()), -- Coordinates vector3(x, y, z) in which the alert is triggered
-            title = "ATM Robbery", -- Title in the alert header
-            type = "FORCE", -- Alert type (GENERAL, RADARS, 215, DRUGS, FORCE, 48X) This is to filter the alerts in the dashboard
-            message = "ATM robbery with forcefull entry", -- Alert message
-            metadata = {} -- Various data that contributes to an icon in the aler
-	})
-    end
+    AlertPolice()
     RunCoolDown()
     AtmHasLooted(entity)
     local dropCoords = GetEntityCoords(playerPed)
@@ -247,7 +255,6 @@ RegisterNetEvent('mh-atmrobbery:client:takemoney', function(entity)
         ResetPedStrafeClipset(playerPed)
         DeleteEntity(entity)
         TriggerServerEvent('mh-atmrobbery:server:payout')
-        TriggerServerEvent("police:server:policeAlert", Lang:t('notify.police_notify'))
     end, function() -- Cancel
         ClearPedTasks(playerPed)
         isTakingMoney = false
