@@ -62,7 +62,7 @@ RegisterNetEvent('mh-atmrobbery:server:payout', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
     if Config.UseCash then
-        local amount = calculateNonLinearAmount(Config.MinCash, Config.MaxCash, Config.randModifier)
+        local amount = math.floor(math.random(Config.MinMarkedWorth, Config.MaxMarkedWorth))
         Player.Functions.AddMoney('cash', amount)
         TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_cash', {amount = amount}), 'success') 
     elseif Config.UseBlackMoney then
