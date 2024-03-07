@@ -25,6 +25,15 @@ local function Notify(message, type, time)
     end
 end
 
+--- Load Model
+---@param model string
+local function LoadModel(model)
+    RequestModel(model)
+    while (not HasModelLoaded(model)) do
+        Wait(0)
+    end
+end
+
 ---Reset the system
 local function Reset()
     for k, v in pairs(lootedAtms) do
@@ -68,6 +77,7 @@ end
 local function AddCashOnGround(atmCoords, dropCoords)
     local cashpile = Config.CashPiles[math.random(1, #Config.CashPiles)]
     local hash = GetHashKey(cashpile)
+    LoadModel(hash)
     local cashProp = CreateObject(hash, dropCoords.x, dropCoords.y, dropCoords.z - 1.4, true, true, false)
     Citizen.Wait(1000)
     FreezeEntityPosition(cashProp, true)
