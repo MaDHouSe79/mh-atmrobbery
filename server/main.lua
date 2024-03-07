@@ -61,21 +61,21 @@ end)
 RegisterNetEvent('mh-atmrobbery:server:payout', function()
     local src = source
     local Player = QBCore.Functions.GetPlayer(src)
-    if Config.UseCash then
+    if Config.UseCash and not Config.UseMarkedBills and not Config.UseBlackMoney then
         local amount = math.floor(math.random(Config.MinMarkedWorth, Config.MaxMarkedWorth))
         Player.Functions.AddMoney('cash', amount)
         TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_cash', {amount = amount}), 'success') 
-    elseif Config.UseBlackMoney then
-        local amount = math.floor(math.random(Config.MinMarkedWorth, Config.MaxMarkedWorth))
-        Player.Functions.AddItem('black_money', amount, false, info)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['black_money'], "add", amount)
-        TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_blackmoney', {amount = amount}), 'success')
-    elseif not Config.UseBlackMoney then
+    elseif Config.UseMarkedBills and not Config.UseBlackMoney then
         local amount = math.floor(math.random(Config.MinMarkedWorth, Config.MaxMarkedWorth))
         local info = {worth = amount}
         Player.Functions.AddItem('markedbills', 1, false, info)
         TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['markedbills'], "add", 1)
         TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_markedbills', {amount = amount}), 'success') 
+    elseif Config.UseBlackMoney and not Config.UseMarkedBills then
+        local amount = math.floor(math.random(Config.MinBlackMoney, Config.MaxBlackMoney))
+        Player.Functions.AddItem('black_money', amount, false, info)
+        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['black_money'], "add", amount)
+        TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_blackmoney', {amount = amount}), 'success')
     end
 end)
 
