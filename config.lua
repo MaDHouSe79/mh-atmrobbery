@@ -15,16 +15,25 @@ Config.copsCalledChance = 80 -- X/100 = 80%
 Config.randModifier = 2 -- Adjust this to change the skewing; higher values make high amounts less likely
 
 -- For Cash
+-- if true Config.UseMarkedBills and Config.UseBlackMoney need to be false
 Config.UseCash = true           
 Config.MinCash = 500
 Config.MaxCash = 20000
 
 -- For MarkedBills
-Config.UseBlackMoney = false -- only true if you use mh-cashasitem, when false it uses markedbills.
+-- if true Config.UseBlackMoney and Config.UseCash need to be false
+Config.UseMarkedBills = false 
 Config.MinMarkedBills = 1 
 Config.MaxMarkedBills = 5
 Config.MinMarkedWorth = 500
 Config.MaxMarkedWorth = 1500
+
+-- For Blackmoney
+-- only true if you use mh-cashasitem, when false it uses markedbills.
+-- if true Config.UseMarkedBills and Config.UseCash need to be false
+Config.UseBlackMoney = false 
+Config.MinBlackMoney = 500
+Config.MaxBlackMoney = 1500
 
 -- Use item
 Config.UseItem = true
