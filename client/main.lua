@@ -128,6 +128,60 @@ local function RobAtm(entity, playerPed, atmCoords)
     end)
 end
 
+---Load Target
+local function LoadTarget()
+    exports['qb-target']:AddTargetModel(Config.Models, {
+        options = {
+            { 
+                type = "client",
+                event = "mh-atmrobbery:client:start",
+                icon = "fas fa-screwdriver",
+                label = Lang:t('menu.rob_atm'),
+                action = function(entity)
+                    if IsPedAPlayer(entity) then return false end
+                    if IsAtmAlreadyLooted(entity) then return false end
+                    TriggerEvent('mh-atmrobbery:client:start', entity)
+                end,
+                canInteract = function(entity, distance, data)
+                    if IsPedAPlayer(entity) then return false end
+                    if IsAtmAlreadyLooted(entity) then return false end
+                    return true
+                end
+            },
+            {
+                event = 'qb-atms:server:enteratm',
+                type = 'server',
+                icon = "fas fa-credit-card",
+                label = Lang:t('menu.use_atm'),
+            },
+        },
+        distance = 1.5 
+    })
+    exports['qb-target']:AddTargetModel(Config.CashPiles, {
+        options = {
+            { 
+                type = "client",
+                event = "mh-atmrobbery:client:takemoney",
+                icon = "fas fa-screwdriver",
+                label = Lang:t('menu.pickup_cash'),
+                action = function(entity)
+                    if IsPedAPlayer(entity) then return false end
+                    TriggerEvent('mh-atmrobbery:client:takemoney', entity)
+                end,
+                canInteract = function(entity, distance, data)
+                    if IsPedAPlayer(entity) then return false end
+                    return true
+                end
+            },
+        },
+        distance = 1.5 
+    })
+end
+
+AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+    LoadTarget()
+end)
+
 AddEventHandler('onResourceStart', function(resource)
     if resource == GetCurrentResourceName() then
         num = nil
@@ -222,55 +276,6 @@ RegisterNetEvent('mh-atmrobbery:client:start', function(entity)
             QBCore.Functions.Notify(Lang:t('notify.already_robbed'), 'error', 5000)
         end
     end, entity)
-end)
-
-CreateThread(function()
-    exports['qb-target']:AddTargetModel(Config.Models, {
-        options = {
-            { 
-                type = "client",
-                event = "mh-atmrobbery:client:start",
-                icon = "fas fa-screwdriver",
-                label = Lang:t('menu.rob_atm'),
-                action = function(entity)
-                    if IsPedAPlayer(entity) then return false end
-                    if IsAtmAlreadyLooted(entity) then return false end
-                    TriggerEvent('mh-atmrobbery:client:start', entity)
-                end,
-                canInteract = function(entity, distance, data)
-                    if IsPedAPlayer(entity) then return false end
-                    if IsAtmAlreadyLooted(entity) then return false end
-                    return true
-                end
-            },
-            {
-                event = 'qb-atms:server:enteratm',
-                type = 'server',
-                icon = "fas fa-credit-card",
-                label = Lang:t('menu.use_atm'),
-            },
-        },
-        distance = 1.5 
-    })
-    exports['qb-target']:AddTargetModel(Config.CashPiles, {
-        options = {
-            { 
-                type = "client",
-                event = "mh-atmrobbery:client:takemoney",
-                icon = "fas fa-screwdriver",
-                label = Lang:t('menu.pickup_cash'),
-                action = function(entity)
-                    if IsPedAPlayer(entity) then return false end
-                    TriggerEvent('mh-atmrobbery:client:takemoney', entity)
-                end,
-                canInteract = function(entity, distance, data)
-                    if IsPedAPlayer(entity) then return false end
-                    return true
-                end
-            },
-        },
-        distance = 1.5 
-    })
 end)
 
 Citizen.CreateThread( function()
