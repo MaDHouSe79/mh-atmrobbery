@@ -22,6 +22,10 @@
   </a>      
 </p>
 
+# My Youtube Channel and Discord
+- [Subscribe](https://www.youtube.com/@MaDHouSe79) 
+- [Discord](https://discord.gg/vJ9EukCmJQ)
+
 # MH-AtmRobbery
 - This is a simpel atm robbery with animations and props.
 - works very nice with mh-hunters,
@@ -60,9 +64,6 @@ ensure [voice]
 ensure [defaultmaps]
 ensure [mh] -- here you must ensure the folder [mh]
 ```
-
-# 🙈 Youtube
-- [Youtube](https://www.youtube.com/c/MaDHouSe79)
 
 # LICENSE
 [GPL LICENSE](./LICENSE)<br />
