@@ -296,7 +296,7 @@ RegisterNetEvent('mh-atmrobbery:client:start', function(entity)
         return QBCore.Functions.Notify(Lang:t('notify.cooldown_active'), 'error', 7500)
     end
     QBCore.Functions.TriggerCallback('mh-atmrobbery:server:CountCops', function(countCops)
-        if countCops > Config.MinCops then
+        if countCops >= Config.MinCops then
             QBCore.Functions.TriggerCallback('mh-atmrobbery:server:canirobatm', function(state)
                 if state == false then
                     local atmCoords = GetEntityCoords(entity)
