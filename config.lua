@@ -10,7 +10,7 @@ Config.NotifyTitle = "ATM Robbery"
 
 -- % chance the cops are called if using origen_police
 Config.copsCalledChance = 80 -- X/100 = 80%
-
+Comfig.MinCops = 2
 -- for both Cash & MarkedBills
 Config.randModifier = 2 -- Adjust this to change the skewing; higher values make high amounts less likely
 
