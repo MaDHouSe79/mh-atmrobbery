@@ -265,34 +265,40 @@ end)
 
 RegisterNetEvent('mh-atmrobbery:client:start', function(entity)
     if cooldown then return QBCore.Functions.Notify(Lang:t('notify.cooldown_active'), 'error', 7500) end
-    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:canirobatm', function(state)
-        if state == false then
-            local atmCoords = GetEntityCoords(entity)
-            local playerPed = PlayerPedId()
-            local playerCoords = GetEntityCoords(playerPed, true)
-            for _, v in pairs(Config.Models) do
-                local hash = GetHashKey(v)
-                local atm = IsObjectNearPoint(hash, playerCoords.x, playerCoords.y, playerCoords.z, 1.5)
-                if atm then
-                    TaskTurnPedToFaceEntity(PlayerPedId(), entity, 5000)
-                    Citizen.Wait(1000)
-                    if Config.UseItem then
-                        QBCore.Functions.TriggerCallback('mh-atmrobbery:server:hasItem', function(hasBom)
-                            if hasBom then
-                                RobAtm(entity, playerPed, atmCoords)
-                            else
-                                QBCore.Functions.Notify(Lang:t('notify.missing_item', {item = Config.BomItem}), 'error', 5000)
-                            end
-                        end)
-                    else
-                        RobAtm(entity, playerPed, atmCoords)
-                    end
-                end
-            end
-        else
-            QBCore.Functions.Notify(Lang:t('notify.already_robbed'), 'error', 5000)
-        end
-    end, entity)
+	QBCore.Functions.TriggerCallback('mh-atmrobbery:server:CountCops', function(countCops)	
+		if countCops > Config.MinCops then
+		    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:canirobatm', function(state)
+		        if state == false then
+		            local atmCoords = GetEntityCoords(entity)
+		            local playerPed = PlayerPedId()
+		            local playerCoords = GetEntityCoords(playerPed, true)
+		            for _, v in pairs(Config.Models) do
+		                local hash = GetHashKey(v)
+		                local atm = IsObjectNearPoint(hash, playerCoords.x, playerCoords.y, playerCoords.z, 1.5)
+		                if atm then
+		                    TaskTurnPedToFaceEntity(PlayerPedId(), entity, 5000)
+		                    Citizen.Wait(1000)
+		                    if Config.UseItem then
+		                        QBCore.Functions.TriggerCallback('mh-atmrobbery:server:hasItem', function(hasBom)
+		                            if hasBom then
+		                                RobAtm(entity, playerPed, atmCoords)
+		                            else
+		                                QBCore.Functions.Notify(Lang:t('notify.missing_item', {item = Config.BomItem}), 'error', 5000)
+		                            end
+		                        end)
+		                    else
+		                        RobAtm(entity, playerPed, atmCoords)
+		                    end
+		                end
+		            end
+		        else
+		            QBCore.Functions.Notify(Lang:t('notify.already_robbed'), 'error', 5000)
+		        end
+		    end, entity)
+		else
+			QBCore.Functions.Notify(Lang:t('notify.noCops'), 'error', 5000)
+		end
+	end)
 end)
 
 Citizen.CreateThread( function()
