@@ -1,6 +1,6 @@
---[[ ===================================================== ]]--
---[[            MH ATM Robbery Script by MaDHouSe          ]]--
---[[ ===================================================== ]]--
+--[[ ===================================================== ]] --
+--[[            MH ATM Robbery Script by MaDHouSe          ]] --
+--[[ ===================================================== ]] --
 local QBCore = exports['qb-core']:GetCoreObject()
 local num = nil
 local isTakingMoney = false
@@ -16,12 +16,19 @@ local function Notify(message, type, time)
     if Config.Notify == "okokNotify" then
         exports['okokNotify']:Alert(Config.NotifyTitle, message, time, type)
     elseif Config.Notify == "qb-core" then
-        if type == "info" then type = "primary" end
-        QBCore.Functions.Notify({text = Config.NotifyTitle, caption = message}, type, time)
+        if type == "info" then
+            type = "primary"
+        end
+        QBCore.Functions.Notify({
+            text = Config.NotifyTitle,
+            caption = message
+        }, type, time)
     elseif Config.Notify == "roda-notify" then
         exports['Roda_Notifications']:showNotify(Config.NotifyTitle, message, type, time)
     else
-        print(Lang:t('info.not_supported',{resource = GetCurrentResourceName()}))
+        print(Lang:t('info.not_supported', {
+            resource = GetCurrentResourceName()
+        }))
     end
 end
 
@@ -66,8 +73,12 @@ end
 ---Set an atm as looted.
 ---@param entity id
 local function AtmHasLooted(entity)
-    if IsAtmAlreadyLooted(entity) then return end
-    lootedAtms[#lootedAtms + 1] = {atm = entity}
+    if IsAtmAlreadyLooted(entity) then
+        return
+    end
+    lootedAtms[#lootedAtms + 1] = {
+        atm = entity
+    }
     TriggerServerEvent('mh-atmrobbery:server:setlooted', entity)
 end
 
@@ -89,14 +100,16 @@ end
 ---@param entity id
 local function AddBom(atmCoords, entity, dropCoords)
     GiveWeaponToPed(PlayerPedId(), GetHashKey("weapon_stickybomb"), 1, false, true)
-    local heading = GetEntityHeading(atmCoords)-- before this is was-> 218.5                                                                   
+    local heading = GetEntityHeading(atmCoords) -- before this is was-> 218.5                                                                   
     TaskPlantBomb(PlayerPedId(), atmCoords, heading)
     Citizen.Wait(1500)
     local time = 5
-    while time > 0 do 
-	QBCore.Functions.Notify(Lang:t('notify.bom_explode_in_secs', {secs = time}))
-	Citizen.Wait(1000)
-	time = time - 1
+    while time > 0 do
+        QBCore.Functions.Notify(Lang:t('notify.bom_explode_in_secs', {
+            secs = time
+        }))
+        Citizen.Wait(1000)
+        time = time - 1
     end
     FreezeEntityPosition(entity, false)
     AddExplosion(atmCoords.x, atmCoords.y, atmCoords.z, EXPLOSION_STICKYBOMB, 4.0, true, false, 20.0)
@@ -115,7 +128,7 @@ local function AlertPolice()
             message = Lang:t('notify.police_notify_description'),
             metadata = {}
         })
-        ]]--
+        ]] --
     end
 end
 
@@ -123,7 +136,7 @@ end
 ---@param entity number
 ---@param playerPed number
 ---@param atmCoords table
-local function RobAtm(entity, playerPed, atmCoords)    
+local function RobAtm(entity, playerPed, atmCoords)
     AlertPolice()
     RunCoolDown()
     AtmHasLooted(entity)
@@ -132,15 +145,15 @@ local function RobAtm(entity, playerPed, atmCoords)
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
-        disableCombat = true,
+        disableCombat = true
     }, {
         animDict = 'anim@gangops@facility@servers@',
         anim = 'hotwire',
-        flags = 16,
-    }, {}, {}, function() 
+        flags = 16
+    }, {}, {}, function()
         ClearPedTasks(playerPed)
         AddBom(atmCoords, entity, dropCoords)
-    end, function() 
+    end, function()
         ClearPedTasks(playerPed)
         QBCore.Functions.Notify(Lang:t('notify.failed'), 'error', 5000)
     end)
@@ -149,50 +162,57 @@ end
 ---Load Target
 local function LoadTarget()
     exports['qb-target']:AddTargetModel(Config.Models, {
-        options = {
-            { 
-                type = "client",
-                event = "mh-atmrobbery:client:start",
-                icon = "fas fa-screwdriver",
-                label = Lang:t('menu.rob_atm'),
-                action = function(entity)
-                    if IsPedAPlayer(entity) then return false end
-                    if IsAtmAlreadyLooted(entity) then return false end
-                    TriggerEvent('mh-atmrobbery:client:start', entity)
-                end,
-                canInteract = function(entity, distance, data)
-                    if IsPedAPlayer(entity) then return false end
-                    if IsAtmAlreadyLooted(entity) then return false end
-                    return true
+        options = {{
+            type = "client",
+            event = "mh-atmrobbery:client:start",
+            icon = "fas fa-screwdriver",
+            label = Lang:t('menu.rob_atm'),
+            action = function(entity)
+                if IsPedAPlayer(entity) then
+                    return false
                 end
-            },
-            {
-                event = 'qb-atms:server:enteratm',
-                type = 'server',
-                icon = "fas fa-credit-card",
-                label = Lang:t('menu.use_atm'),
-            },
-        },
-        distance = 1.5 
+                if IsAtmAlreadyLooted(entity) then
+                    return false
+                end
+                TriggerEvent('mh-atmrobbery:client:start', entity)
+            end,
+            canInteract = function(entity, distance, data)
+                if IsPedAPlayer(entity) then
+                    return false
+                end
+                if IsAtmAlreadyLooted(entity) then
+                    return false
+                end
+                return true
+            end
+        }, {
+            event = 'qb-atms:server:enteratm',
+            type = 'server',
+            icon = "fas fa-credit-card",
+            label = Lang:t('menu.use_atm')
+        }},
+        distance = 1.5
     })
     exports['qb-target']:AddTargetModel(Config.CashPiles, {
-        options = {
-            { 
-                type = "client",
-                event = "mh-atmrobbery:client:takemoney",
-                icon = "fas fa-screwdriver",
-                label = Lang:t('menu.pickup_cash'),
-                action = function(entity)
-                    if IsPedAPlayer(entity) then return false end
-                    TriggerEvent('mh-atmrobbery:client:takemoney', entity)
-                end,
-                canInteract = function(entity, distance, data)
-                    if IsPedAPlayer(entity) then return false end
-                    return true
+        options = {{
+            type = "client",
+            event = "mh-atmrobbery:client:takemoney",
+            icon = "fas fa-screwdriver",
+            label = Lang:t('menu.pickup_cash'),
+            action = function(entity)
+                if IsPedAPlayer(entity) then
+                    return false
                 end
-            },
-        },
-        distance = 1.5 
+                TriggerEvent('mh-atmrobbery:client:takemoney', entity)
+            end,
+            canInteract = function(entity, distance, data)
+                if IsPedAPlayer(entity) then
+                    return false
+                end
+                return true
+            end
+        }},
+        distance = 1.5
     })
 end
 
@@ -235,19 +255,27 @@ RegisterNetEvent('mh-atmrobbery:client:takemoney', function(entity)
         disableMovement = true,
         disableCarMovement = true,
         disableMouse = false,
-        disableCombat = true,
+        disableCombat = true
     }, {
         animDict = "anim@heists@ornate_bank@grab_cash_heels",
         anim = "grab",
-        flags = 16,
+        flags = 16
     }, {
-       model = "prop_cs_heist_bag_02",
-       bone = 57005,
-       coords = { x = -0.005, y = 0.00, z = -0.16 },
-       rotation = { x = 250.0, y = -30.0, z = 0.0 },
+        model = "prop_cs_heist_bag_02",
+        bone = 57005,
+        coords = {
+            x = -0.005,
+            y = 0.00,
+            z = -0.16
+        },
+        rotation = {
+            x = 250.0,
+            y = -30.0,
+            z = 0.0
+        }
     }, {}, function() -- Done
         StopAnimTask(playerPed, "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
-	SetPedComponentVariation(playerPed, 5, 47, 0, 0)
+        SetPedComponentVariation(playerPed, 5, 47, 0, 0)
         isTakingMoney = false
         Citizen.Wait(1000)
         ResetPedMovementClipset(playerPed, 0)
@@ -259,57 +287,62 @@ RegisterNetEvent('mh-atmrobbery:client:takemoney', function(entity)
         ClearPedTasks(playerPed)
         isTakingMoney = false
         StopAnimTask(playerPed, "anim@heists@ornate_bank@grab_cash_heels", "grab", 1.0)
-	SetPedComponentVariation(playerPed, 5, 47, 0, 0)
+        SetPedComponentVariation(playerPed, 5, 47, 0, 0)
     end)
 end)
 
 RegisterNetEvent('mh-atmrobbery:client:start', function(entity)
-    if cooldown then return QBCore.Functions.Notify(Lang:t('notify.cooldown_active'), 'error', 7500) end
-	QBCore.Functions.TriggerCallback('mh-atmrobbery:server:CountCops', function(countCops)	
-		if countCops > Config.MinCops then
-		    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:canirobatm', function(state)
-		        if state == false then
-		            local atmCoords = GetEntityCoords(entity)
-		            local playerPed = PlayerPedId()
-		            local playerCoords = GetEntityCoords(playerPed, true)
-		            for _, v in pairs(Config.Models) do
-		                local hash = GetHashKey(v)
-		                local atm = IsObjectNearPoint(hash, playerCoords.x, playerCoords.y, playerCoords.z, 1.5)
-		                if atm then
-		                    TaskTurnPedToFaceEntity(PlayerPedId(), entity, 5000)
-		                    Citizen.Wait(1000)
-		                    if Config.UseItem then
-		                        QBCore.Functions.TriggerCallback('mh-atmrobbery:server:hasItem', function(hasBom)
-		                            if hasBom then
-		                                RobAtm(entity, playerPed, atmCoords)
-		                            else
-		                                QBCore.Functions.Notify(Lang:t('notify.missing_item', {item = Config.BomItem}), 'error', 5000)
-		                            end
-		                        end)
-		                    else
-		                        RobAtm(entity, playerPed, atmCoords)
-		                    end
-		                end
-		            end
-		        else
-		            QBCore.Functions.Notify(Lang:t('notify.already_robbed'), 'error', 5000)
-		        end
-		    end, entity)
-		else
-			QBCore.Functions.Notify(Lang:t('notify.noCops'), 'error', 5000)
-		end
-	end)
+    if cooldown then
+        return QBCore.Functions.Notify(Lang:t('notify.cooldown_active'), 'error', 7500)
+    end
+    QBCore.Functions.TriggerCallback('mh-atmrobbery:server:CountCops', function(countCops)
+        if countCops > Config.MinCops then
+            QBCore.Functions.TriggerCallback('mh-atmrobbery:server:canirobatm', function(state)
+                if state == false then
+                    local atmCoords = GetEntityCoords(entity)
+                    local playerPed = PlayerPedId()
+                    local playerCoords = GetEntityCoords(playerPed, true)
+                    for _, v in pairs(Config.Models) do
+                        local hash = GetHashKey(v)
+                        local atm = IsObjectNearPoint(hash, playerCoords.x, playerCoords.y, playerCoords.z, 1.5)
+                        if atm then
+                            TaskTurnPedToFaceEntity(PlayerPedId(), entity, 5000)
+                            Citizen.Wait(1000)
+                            if Config.UseItem then
+                                QBCore.Functions.TriggerCallback('mh-atmrobbery:server:hasItem', function(hasBom)
+                                    if hasBom then
+                                        RobAtm(entity, playerPed, atmCoords)
+                                    else
+                                        QBCore.Functions.Notify(
+                                            Lang:t('notify.missing_item', {
+                                                item = Config.BomItem
+                                            }), 'error', 5000)
+                                    end
+                                end)
+                            else
+                                RobAtm(entity, playerPed, atmCoords)
+                            end
+                        end
+                    end
+                else
+                    QBCore.Functions.Notify(Lang:t('notify.already_robbed'), 'error', 5000)
+                end
+            end, entity)
+        else
+            QBCore.Functions.Notify(Lang:t('notify.noCops'), 'error', 5000)
+        end
+    end)
 end)
 
-Citizen.CreateThread( function()
-    while true do 
+Citizen.CreateThread(function()
+    while true do
         Citizen.Wait(1)
         if isTakingMoney then
             local playerPed = PlayerPedId()
             RequestAnimSet("move_ped_crouched")
-            while (not HasAnimSetLoaded("move_ped_crouched")) do 
+            while (not HasAnimSetLoaded("move_ped_crouched")) do
                 Citizen.Wait(100)
-            end 
+            end
             SetPedMovementClipset(playerPed, "move_ped_crouched", 0.25)
         end
     end
