@@ -14,6 +14,7 @@ local Translations = {
         ['payout_blackmoney'] = "Je kreeg €%{amount} zwart money!",
         ['already_robbed'] = "Deze ATM is al overvallen..",
         ['atm_robbery_reset'] = "The atm overvallen zijn gereset...",
+        ['noCops'] = "Er zijn geen agenten online",
     },
     menu = {
         ['rob_atm'] = "Beroof ATM",
