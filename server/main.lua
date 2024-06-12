@@ -16,6 +16,17 @@ local function Reset()
     end)
 end
 
+local function CountCops()
+    local online = 0
+    for k, id in pairs(QBCore.Functions.GetPlayers()) do
+        local target = QBCore.Functions.GetPlayer(id)
+        if target.PlayerData.job.name == "police" and target.PlayerData.job.onduty then
+            online = online + 1
+        end
+    end
+    return online
+end
+
 local function IsAlreadyLooted(entity)
     local found = false
     if netEntities[entity] then found = true end
@@ -25,6 +36,10 @@ end
 local function SetIsLooted(entity)
     if not netEntities[entity] then netEntities[entity] = true end
 end
+
+QBCore.Functions.CreateCallback("mh-atmrobbery:server:CountCops", function(source, cb)
+    cb(CountCops())
+end)
 
 QBCore.Functions.CreateCallback("mh-atmrobbery:server:canirobatm", function(source, cb, netID)
     cb(IsAlreadyLooted(netID))
