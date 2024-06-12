@@ -14,6 +14,7 @@ local Translations = {
         ['payout_blackmoney'] = "You received $%{amount} black money!",
         ['already_robbed'] = "This ATM is already robbed..",
         ['atm_robbery_reset'] = "The atm robbery has been reset...",
+        ['noCops'] = "There are no agents online",
     },
     menu = {
         ['rob_atm'] = "Rob ATM",
