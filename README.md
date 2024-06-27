@@ -39,7 +39,7 @@
 - [qb-core](https://github.com/qbcore-framework/qb-core)
 - [qb-target](https://github.com/qbcore-framework/qb-target) 
 - [progressbar](https://github.com/qbcore-framework/progressbar) 
-
+- [qb-inventory] (old version)
 
 # Optional
 - [mh-hunters](https://github.com/MaDHouSe79/mh-hunters)
