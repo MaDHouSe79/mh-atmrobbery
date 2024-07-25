@@ -52,7 +52,7 @@ QBCore.Functions.CreateCallback("mh-atmrobbery:server:hasItem", function(source,
         local hasItem = QBCore.Functions.HasItem(src, Config.BomItem, 1) -- Adjusted to correctly access HasItem
         if hasItem then
             Player.Functions.RemoveItem(Config.BomItem, 1)
-            TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[Config.BomItem], "remove", 1) -- Corrected item reference
+            TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items[Config.BomItem], "remove", 1) -- Corrected item reference
             cb(true)
         end
     end
@@ -84,12 +84,12 @@ RegisterNetEvent('mh-atmrobbery:server:payout', function()
         local amount = math.floor(math.random(Config.MinMarkedWorth, Config.MaxMarkedWorth))
         local info = {worth = amount}
         Player.Functions.AddItem('markedbills', 1, false, info)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['markedbills'], "add", 1)
+        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['markedbills'], "add", 1)
         TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_markedbills', {amount = amount}), 'success') 
     elseif Config.UseBlackMoney and not Config.UseMarkedBills then
         local amount = math.floor(math.random(Config.MinBlackMoney, Config.MaxBlackMoney))
         Player.Functions.AddItem('black_money', amount, false, info)
-        TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items['black_money'], "add", amount)
+        TriggerClientEvent('qb-inventory:client:ItemBox', src, QBCore.Shared.Items['black_money'], "add", amount)
         TriggerClientEvent('mh-atmrobbery:client:notify', src, Lang:t('notify.payout_blackmoney', {amount = amount}), 'success')
     end
 end)
