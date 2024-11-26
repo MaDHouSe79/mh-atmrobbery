@@ -25,3 +25,6 @@ server_scripts {
     'server/main.lua',
     'server/update.lua',
 }
+dependencies {
+    'qb-core', 'mh-core'
+}
